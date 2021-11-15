@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "Hamza-Main",
+			"path": "Hamza-Main"
+		},
+		{
+			"name": "Hamza-Bedroom",
+			"path": "Hamza-Bedroom"
+		}
+	],
+	"settings": {
+		"workbench.colorTheme": "Abyss"
+	}
+}
