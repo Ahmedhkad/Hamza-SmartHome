@@ -15,13 +15,8 @@
 //#define RX 3    //-pin is High on boot , Output reversed
 
 /* I/O pins selection of NodeMCU */ 
-#define light01           16  //D0
-#define light02           0   //D3
-#define light03           2   //D4
-#define relay01           5   //D1
-#define relay02           4   //D2
-#define dhtpin           14   //D5
-#define button1         12   //D6
-#define button2         13   //D7
-#define button3        15   //D8
-#define ldrpin           A0   //A0
+#define MainSpeakers           5
+#define BathSpeakers           4
+#define FrontSpeakers          14
+#define MainAMP                12
+#define BathAMP                13
