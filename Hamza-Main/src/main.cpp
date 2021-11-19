@@ -13,23 +13,39 @@ char auth[] = BLYNK_AUTH_TOKEN;
 char ssid[] = WIFI_SSID;
 char pass[] = WIFI_PASS;
 
+
+WidgetBridge bridgeBedroom(V10);
+
 BLYNK_WRITE(V0)
 {
   switch (param.asInt())
   {
   case 1:
-    digitalWrite(BathAMP, LOW);
-    digitalWrite(BathSpeakers, LOW);
-    delay(100);
-    digitalWrite(MainAMP, HIGH);
-    digitalWrite(MainSpeakers, HIGH);
-    break;
-  case 2:
-    digitalWrite(MainAMP, LOW);
-    digitalWrite(MainSpeakers, LOW);
-    delay(100);
     digitalWrite(BathAMP, HIGH);
     digitalWrite(BathSpeakers, HIGH);
+    bridgeBedroom.virtualWrite(V1, 0);
+    bridgeBedroom.virtualWrite(V2, 0);
+    delay(100);
+    digitalWrite(MainAMP, LOW);
+    digitalWrite(MainSpeakers, LOW);
+    break;
+  case 2:
+    digitalWrite(MainAMP, HIGH);
+    digitalWrite(MainSpeakers, HIGH);
+    bridgeBedroom.virtualWrite(V1, 0);
+    bridgeBedroom.virtualWrite(V2, 0);
+    delay(100);
+    digitalWrite(BathAMP, LOW);
+    digitalWrite(BathSpeakers, LOW);
+    break;
+      case 3:
+    digitalWrite(MainAMP, HIGH);
+    digitalWrite(BathAMP, HIGH);
+    digitalWrite(MainSpeakers, HIGH);
+    digitalWrite(BathSpeakers, HIGH);
+    delay(100);
+    bridgeBedroom.virtualWrite(V1, 1);
+    bridgeBedroom.virtualWrite(V2, 1);
     break;
   default:
     break;
@@ -39,6 +55,7 @@ BLYNK_WRITE(V0)
 // This function is called every time the device is connected to the Blynk.Cloud
 BLYNK_CONNECTED()
 {
+  bridgeBedroom.setAuthToken(BedroomAUTH);
 }
 
 void setup()
@@ -57,5 +74,4 @@ void setup()
 void loop()
 {
   Blynk.run();
-  timer.run();
 }
