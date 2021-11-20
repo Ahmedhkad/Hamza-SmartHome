@@ -8,11 +8,12 @@
 // Comment this out to disable prints and save space
 #define BLYNK_PRINT Serial
 
-char auth[] = BLYNK_AUTH_TOKEN;
+char auth[] = MainAUTH;
 // Your WiFi credentials.
 char ssid[] = WIFI_SSID;
 char pass[] = WIFI_PASS;
 
+int frontState;
 
 WidgetBridge bridgeBedroom(V10);
 
@@ -47,15 +48,29 @@ BLYNK_WRITE(V0)
     bridgeBedroom.virtualWrite(V1, 1);
     bridgeBedroom.virtualWrite(V2, 1);
     break;
+     case 4:                                  //All OFF
+    digitalWrite(MainAMP, HIGH);
+    digitalWrite(BathAMP, HIGH);
+    digitalWrite(MainSpeakers, HIGH);
+    digitalWrite(BathSpeakers, HIGH);
+    bridgeBedroom.virtualWrite(V1, 0);
+    bridgeBedroom.virtualWrite(V2, 0);
+    break;
   default:
     break;
   }
+}
+
+BLYNK_WRITE(V1) {
+  frontState = param.asInt();
+  digitalWrite(FrontSpeakers,!frontState);
 }
 
 // This function is called every time the device is connected to the Blynk.Cloud
 BLYNK_CONNECTED()
 {
   bridgeBedroom.setAuthToken(BedroomAUTH);
+
 }
 
 void setup()
@@ -69,6 +84,13 @@ void setup()
   pinMode(FrontSpeakers, OUTPUT);
   pinMode(MainAMP, OUTPUT);
   pinMode(BathAMP, OUTPUT);
+
+digitalWrite(MainSpeakers, HIGH);   // Set all relays OFF (signal inverted) 
+digitalWrite(BathSpeakers, HIGH); 
+digitalWrite(FrontSpeakers, HIGH);  
+digitalWrite(MainAMP, HIGH);        
+digitalWrite(BathAMP, HIGH);
+
 }
 
 void loop()
