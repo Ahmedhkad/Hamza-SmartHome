@@ -13,6 +13,7 @@
 BlynkTimer timer;
 
 WidgetRTC rtc;
+WidgetLED led(V5);
 
 char auth[] = EnteryAUTH;
 // Your WiFi credentials.
@@ -47,27 +48,15 @@ void outDoorLights(){
 
   if( secondsNow >= setON && secondsNow < setOFF){
     digitalWrite(OutsideLight,LOW);
+    led.on();
   }
   else{
 
     digitalWrite(OutsideLight,HIGH);
+    led.off();
   }
-
 }
 
-void clockDisplay()
-{
-  // You can call hour(), minute(), ... at any time
-  // Please see Time library examples for details
-
-  String currentTime = String(hour()) + ":" + minute() + ":" + second();
-  String currentDate = String(day()) + " " + month() + " " + year();
-  Serial.print("Current time: ");
-  Serial.print(currentTime);
-  Serial.print(" ");
-  Serial.print(currentDate);
-  Serial.println();
-}
 
 // This function is called every time the device is connected to the Blynk.Cloud
 BLYNK_CONNECTED()
@@ -88,7 +77,6 @@ void setup()
   digitalWrite(EnteryLight, HIGH);  //all relays off when startup
   digitalWrite(OutsideLight,HIGH);
 
-  timer.setInterval(30000L, clockDisplay);
   timer.setInterval(10000L, outDoorLights);
 }
 
@@ -97,5 +85,3 @@ void loop()
   Blynk.run();
   timer.run();
 }
-
-
