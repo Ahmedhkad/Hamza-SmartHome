@@ -15,13 +15,17 @@ char pass[] = WIFI_PASS;
 
 int frontState;
 
+int outsideState;
+int enteryState;
+
 WidgetBridge bridgeBedroom(V10);
+WidgetBridge bridgeEntery(V20);
 
 BLYNK_WRITE(V0)
 {
   switch (param.asInt())
   {
-  case 1:
+  case 1: // Main speakers ON
     digitalWrite(BathAMP, HIGH);
     digitalWrite(BathSpeakers, HIGH);
     bridgeBedroom.virtualWrite(V1, 0);
@@ -30,7 +34,7 @@ BLYNK_WRITE(V0)
     digitalWrite(MainAMP, LOW);
     digitalWrite(MainSpeakers, LOW);
     break;
-  case 2:
+  case 2: // Bathroom speakers ON
     digitalWrite(MainAMP, HIGH);
     digitalWrite(MainSpeakers, HIGH);
     bridgeBedroom.virtualWrite(V1, 0);
@@ -39,7 +43,7 @@ BLYNK_WRITE(V0)
     digitalWrite(BathAMP, LOW);
     digitalWrite(BathSpeakers, LOW);
     break;
-      case 3:
+  case 3: // Bedroom speakers ON
     digitalWrite(MainAMP, HIGH);
     digitalWrite(BathAMP, HIGH);
     digitalWrite(MainSpeakers, HIGH);
@@ -48,7 +52,7 @@ BLYNK_WRITE(V0)
     bridgeBedroom.virtualWrite(V1, 1);
     bridgeBedroom.virtualWrite(V2, 1);
     break;
-     case 4:                                  //All OFF
+  case 4: // All OFF
     digitalWrite(MainAMP, HIGH);
     digitalWrite(BathAMP, HIGH);
     digitalWrite(MainSpeakers, HIGH);
@@ -61,16 +65,28 @@ BLYNK_WRITE(V0)
   }
 }
 
-BLYNK_WRITE(V1) {
+BLYNK_WRITE(V1) // Switch between front and roof's speakers in Hall
+{
   frontState = param.asInt();
-  digitalWrite(FrontSpeakers,!frontState);
+  digitalWrite(FrontSpeakers, !frontState);
+}
+
+BLYNK_WRITE(V2) // Manual control Entery lights - light around house
+{
+  outsideState = param.asInt();
+  bridgeEntery.virtualWrite(V2, outsideState);
+}
+BLYNK_WRITE(V3) // Manual control Entery lights - Garage lights
+{
+  enteryState = param.asInt();
+  bridgeEntery.virtualWrite(V1, enteryState);
 }
 
 // This function is called every time the device is connected to the Blynk.Cloud
 BLYNK_CONNECTED()
 {
   bridgeBedroom.setAuthToken(BedroomAUTH);
-
+  bridgeEntery.setAuthToken(EnteryAUTH);
 }
 
 void setup()
@@ -85,12 +101,11 @@ void setup()
   pinMode(MainAMP, OUTPUT);
   pinMode(BathAMP, OUTPUT);
 
-digitalWrite(MainSpeakers, HIGH);   // Set all relays OFF (signal inverted) 
-digitalWrite(BathSpeakers, HIGH); 
-digitalWrite(FrontSpeakers, HIGH);  
-digitalWrite(MainAMP, HIGH);        
-digitalWrite(BathAMP, HIGH);
-
+  digitalWrite(MainSpeakers, HIGH); // Set all relays OFF (signal inverted)
+  digitalWrite(BathSpeakers, HIGH);
+  digitalWrite(FrontSpeakers, HIGH);
+  digitalWrite(MainAMP, HIGH);
+  digitalWrite(BathAMP, HIGH);
 }
 
 void loop()

@@ -39,6 +39,9 @@ void setup()
   pinMode(BedroomAmp, OUTPUT);
   pinMode(BedroomSpeakers, OUTPUT);
 
+  digitalWrite(BedroomSpeakers,HIGH);
+  digitalWrite(BedroomAmp, HIGH);
+
 }
 
 void loop()
