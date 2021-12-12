@@ -17,4 +17,4 @@
 /* I/O pins selection of NodeMCU */ 
 #define EnteryLight           5
 #define OutsideLight            4
-
+#define RFPin                   14
