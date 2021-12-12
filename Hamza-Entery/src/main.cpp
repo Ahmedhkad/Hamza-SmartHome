@@ -4,9 +4,15 @@
 
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
+#include <TimeLib.h>
+#include <WidgetRTC.h>
 
 // Comment this out to disable prints and save space
 #define BLYNK_PRINT Serial
+
+BlynkTimer timer;
+
+WidgetRTC rtc;
 
 char auth[] = EnteryAUTH;
 // Your WiFi credentials.
@@ -14,6 +20,9 @@ char ssid[] = WIFI_SSID;
 char pass[] = WIFI_PASS;
  int EnteryState;
  int OutsideState;
+ int secondsNow;
+ int setON = 68400;  // default time on is 20:00
+ int setOFF = 25200; // default time off is 07:00
 
 BLYNK_WRITE(V1) {
   EnteryState = param.asInt();
@@ -24,10 +33,47 @@ BLYNK_WRITE(V2) {
   digitalWrite(OutsideLight,!OutsideState);
 }
 
+
+BLYNK_WRITE(V3) {
+  setON = param.asInt();
+}
+
+BLYNK_WRITE(V4) {
+  setOFF = param.asInt();
+}
+
+void outDoorLights(){
+  secondsNow = (hour()*3600) + (minute()*60) + second();  //count seconds to compare it with setON and setOFF
+
+  if( secondsNow >= setON && secondsNow < setOFF){
+    digitalWrite(OutsideLight,LOW);
+  }
+  else{
+
+    digitalWrite(OutsideLight,HIGH);
+  }
+
+}
+
+void clockDisplay()
+{
+  // You can call hour(), minute(), ... at any time
+  // Please see Time library examples for details
+
+  String currentTime = String(hour()) + ":" + minute() + ":" + second();
+  String currentDate = String(day()) + " " + month() + " " + year();
+  Serial.print("Current time: ");
+  Serial.print(currentTime);
+  Serial.print(" ");
+  Serial.print(currentDate);
+  Serial.println();
+}
+
 // This function is called every time the device is connected to the Blynk.Cloud
 BLYNK_CONNECTED()
 {
-
+ // Synchronize time on connection
+  rtc.begin();
 }
 
 void setup()
@@ -41,11 +87,15 @@ void setup()
 
   digitalWrite(EnteryLight, HIGH);  //all relays off when startup
   digitalWrite(OutsideLight,HIGH);
+
+  timer.setInterval(30000L, clockDisplay);
+  timer.setInterval(10000L, outDoorLights);
 }
 
 void loop()
 {
   Blynk.run();
+  timer.run();
 }
 
 
