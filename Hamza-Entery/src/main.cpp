@@ -6,6 +6,7 @@
 #include <BlynkSimpleEsp8266.h>
 #include <TimeLib.h>
 #include <WidgetRTC.h>
+
 #include <RCSwitch.h> //for wireless RF433 control
 RCSwitch mySwitch = RCSwitch();
 
@@ -17,6 +18,7 @@ BlynkTimer timer;
 WidgetRTC rtc;
 WidgetLED led(V5);
 
+
 char auth[] = EnteryAUTH;
 // Your WiFi credentials.
 char ssid[] = WIFI_SSID;
@@ -24,8 +26,9 @@ char pass[] = WIFI_PASS;
 int EnteryState;
 int OutsideState;
 int secondsNow;
-int setON = 68400;  // default time on is 20:00
-int setOFF = 25200; // default time off is 07:00
+int timerEnable = 1;
+int setON = 64800;  // default time on is 18:00
+int setOFF = 19800; // default time off is 05:30
 
 int lightSwitch01;
 int lightSwitch02;
@@ -39,13 +42,22 @@ int lightSwitch09;
 
 BLYNK_WRITE(V1)
 {
-  EnteryState = param.asInt();
-  digitalWrite(EnteryLight, !EnteryState);
+  if (timerEnable == 0)
+  {
+
+    EnteryState = param.asInt();
+    digitalWrite(EnteryLight, !EnteryState);
+    Serial.print("EnteryState = ");
+    Serial.println(EnteryState);
+  }
 }
 BLYNK_WRITE(V2)
 {
-  OutsideState = param.asInt();
-  digitalWrite(OutsideLight, !OutsideState);
+  if (timerEnable == 0)
+  {
+    OutsideState = param.asInt();
+    digitalWrite(OutsideLight, !OutsideState);
+  }
 }
 
 BLYNK_WRITE(V3)
@@ -58,35 +70,30 @@ BLYNK_WRITE(V4)
   setOFF = param.asInt();
 }
 
+BLYNK_WRITE(V6)
+{
+  timerEnable = param.asInt();
+}
+
 void outDoorLights()
 {
   secondsNow = (hour() * 3600) + (minute() * 60) + second(); // count seconds to compare it with setON and setOFF
-
-  if (secondsNow >= setON && secondsNow < setOFF)
+  if (timerEnable == 1)
   {
-    digitalWrite(OutsideLight, LOW);
-    led.on();
-  }
-  else
-  {
+    if (secondsNow >= setON && secondsNow < setOFF)
+    {
+      digitalWrite(OutsideLight, LOW);
+      led.on();
+    }
+    else
+    {
 
-    digitalWrite(OutsideLight, HIGH);
-    led.off();
+      digitalWrite(OutsideLight, HIGH);
+      led.off();
+    }
   }
 }
 
-BLYNK_WRITE(V11)
-{ // Try to send RF-signal or change Button Ststus only
-  lightSwitch01 = param.asInt();
-  if (lightSwitch01 == 1)
-  {
-    mySwitch.send(3159510, 24);
-  }
-  else
-  {
-    mySwitch.send(3159514, 24);
-  }
-}
 BLYNK_WRITE(V11)
 { // Wireless Switch 1
   lightSwitch01 = param.asInt();
