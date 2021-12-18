@@ -16,7 +16,8 @@
 
 /* I/O pins selection of NodeMCU */ 
 #define MainSpeakers           5
-#define BathSpeakers           4
+#define BathSpeakers           0
 #define FrontSpeakers          14
 #define MainAMP                12
 #define BathAMP                13
+#define IRPin                  4
