@@ -36,6 +36,7 @@ int lightSwitch07;
 int lightSwitch08;
 int lightSwitch09;
 int bluetoothButton;
+int holdBtnTime=40;     //Hold time on IR button
 
 boolean bluetoothState = false;
 
@@ -47,7 +48,7 @@ void bluetoothIR()
   irsend.sendRaw(rawData, 71, 32); // Send a raw data capture at 38kHz.
   delay(150);
 
-  for (int x = 0; x <= 20; x++)
+  for (int x = 0; x <= holdBtnTime; x++)
   {
     irsend.sendRaw(rawData2, 3, 32);
     delay(150);
@@ -148,6 +149,11 @@ BLYNK_WRITE(V3) // Manual control Entery lights - Garage lights
 BLYNK_WRITE(V4) // Time Enable on Entery board
 {
   bridgeEntery.virtualWrite(V6, param.asInt());
+}
+
+BLYNK_WRITE(V5) // Set Hold IR blutooth's power button
+{
+  holdBtnTime = param.asInt();
 }
 
 BLYNK_WRITE(V11)
