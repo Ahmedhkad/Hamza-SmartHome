@@ -18,8 +18,6 @@ char pass[] = WIFI_PASS;
 const uint16_t kIrLed = IRPin; // ESP8266 GPIO pin to use. Recommended: 4 (D2).
 IRsend irsend(kIrLed);         // Set the GPIO to be used to sending the message.
 // data captured by IRrecvDumpV2.ino
-uint16_t rawData[71] = {9036, 4526, 552, 562, 570, 562, 572, 562, 570, 562, 570, 562, 570, 562, 572, 562, 572, 562, 570, 1598, 666, 1712, 550, 1692, 572, 1692, 572, 1680, 584, 1692, 572, 1712, 550, 1636, 628, 562, 570, 562, 570, 562, 570, 1642, 620, 562, 570, 562, 570, 1662, 602, 562, 570, 1640, 626, 1676, 586, 1712, 550, 564, 570, 1648, 616, 1692, 570, 564, 570, 1710, 554, 39470, 9036, 2290, 552};
-uint16_t rawData2[3] = {9034, 2290, 552};
 
 int frontState;
 
@@ -48,14 +46,7 @@ WidgetBridge bridgeEntery(V20);
 
 void bluetoothIR()
 {
-  irsend.sendRaw(rawData, 71, 32); // Send a raw data capture at 38kHz.
-  delay(150);
-
-  for (int x = 0; x <= holdBtnTime; x++)
-  {
-    irsend.sendRaw(rawData2, 3, 32);
-    delay(150);
-  }
+  irsend.sendNEC(0xFF12ED, 32, 40); // Send a raw data capture at 38kHz.
 }
 void bluetoothON()
 {

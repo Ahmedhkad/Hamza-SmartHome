@@ -21,4 +21,4 @@
 #define MainAMP                12
 #define BathAMP                13
 #define IRPin                  4
-#define RFPin                  2 
+#define RFPin                  15 
