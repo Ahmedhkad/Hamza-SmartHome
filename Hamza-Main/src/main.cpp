@@ -7,8 +7,8 @@
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
 
-// Comment this out to disable prints and save space
-// #define BLYNK_PRINT Serial
+#include <RCSwitch.h> //for wireless RF433 control
+RCSwitch mySwitch = RCSwitch();
 
 char auth[] = MainAUTH;
 // Your WiFi credentials.
@@ -35,6 +35,9 @@ int lightSwitch06;
 int lightSwitch07;
 int lightSwitch08;
 int lightSwitch09;
+int lightSwitch21;
+int lightSwitch22;
+int lightSwitch23;
 int bluetoothButton;
 int holdBtnTime=40;     //Hold time on IR button
 
@@ -213,6 +216,43 @@ BLYNK_WRITE(V20) // Wireless Switch 9
     bluetoothOFF();
   }
 }
+
+BLYNK_WRITE(V21)
+{ // Wireless Switch 9
+  lightSwitch21 = param.asInt();
+  if (lightSwitch09 == 1)
+  {
+    mySwitch.send(3158590, 24);
+  }
+  else
+  {
+    mySwitch.send(3159494, 24);
+  }
+}
+BLYNK_WRITE(V22)
+{ // Wireless Switch 9
+  lightSwitch22 = param.asInt();
+  if (lightSwitch09 == 1)
+  {
+    mySwitch.send(3158530, 24);
+  }
+  else
+  {
+    mySwitch.send(3159414, 24);
+  }
+}
+BLYNK_WRITE(V23)
+{ // Wireless Switch 9
+  lightSwitch23 = param.asInt();
+  if (lightSwitch09 == 1)
+  {
+    mySwitch.send(3159355, 24);
+  }
+  else
+  {
+    mySwitch.send(3159194, 24);
+  }
+}
 // This function is called every time the device is connected to the Blynk.Cloud
 BLYNK_CONNECTED()
 {
@@ -226,6 +266,8 @@ void setup()
   // Serial.begin(9600);
   Blynk.begin(auth, ssid, pass);
   irsend.begin();
+  mySwitch.enableTransmit(RFPin); // GPIO15 D7 RF radio pin
+
   pinMode(MainSpeakers, OUTPUT);
   pinMode(BathSpeakers, OUTPUT);
   pinMode(FrontSpeakers, OUTPUT);
