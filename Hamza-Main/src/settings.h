@@ -1,24 +1,23 @@
-//////////////////////////////////////////////////////////// 
-//             Settings Configuration                      //
-////////////////////////////////////////////////////////// 
-
 /* special specs of NodeMCU pins */ 
-//#define D0 16   //-pin is High on boot
-//#define D1 5    //good
-//#define D2 4    //good
-//#define D3 0    //-boot failure if pulled low !!
-//#define D4 2    //-boot failure if pulled low !!
-//#define D5 14   //good  
-//#define D6 12   //good  
-//#define D7 13   //good
-//#define D8 15 //-boot failure if pulled high !! must be low as in LDR with 4.7K R to GND
-//#define RX 3    //-pin is High on boot , Output reversed
+//#define       16    //D0     //-pin is High on boot
+//#define       5     //D1     //good
+//#define       4     //D2     //good
+//#define       0     //D3     //-boot failure if pulled low !!
+//#define       2     //D4     //-boot failure if pulled low !!
+//#define       14    //D5     //good  
+//#define       12    //D6     //good  
+//#define       13    //D7     //good
+//#define       15    //D8     //-boot failure if pulled high !! must be low as in LDR with 4.7K R to GND
+//#define       3     //RX     //-pin is High on boot , Output reversed
+
 
 /* I/O pins selection of NodeMCU */ 
-#define MainSpeakers           5
-#define BathSpeakers           0
-#define FrontSpeakers          14
-#define MainAMP                12
-#define BathAMP                13
-#define IRPin                  4
-#define RFPin                  15 
+
+#define NVRPower            5     //D1 
+#define MainSpeakers        16    //D0 
+#define BathSpeakers        0     //D3 
+#define FrontSpeakers       14    //D5
+#define MainAMP             12    //D6 
+#define BathAMP             13    //D7
+#define IRPin               4     //D2
+#define RFPin               15    //D8 
