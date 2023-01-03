@@ -7,8 +7,8 @@
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
 
-// Comment this out to disable prints and save space
-// #define BLYNK_PRINT Serial
+#include <RCSwitch.h> //for wireless RF433 control
+RCSwitch mySwitch = RCSwitch();
 
 char auth[] = MainAUTH;
 // Your WiFi credentials.
@@ -18,8 +18,6 @@ char pass[] = WIFI_PASS;
 const uint16_t kIrLed = IRPin; // ESP8266 GPIO pin to use. Recommended: 4 (D2).
 IRsend irsend(kIrLed);         // Set the GPIO to be used to sending the message.
 // data captured by IRrecvDumpV2.ino
-uint16_t rawData[71] = {9036, 4526, 552, 562, 570, 562, 572, 562, 570, 562, 570, 562, 570, 562, 572, 562, 572, 562, 570, 1598, 666, 1712, 550, 1692, 572, 1692, 572, 1680, 584, 1692, 572, 1712, 550, 1636, 628, 562, 570, 562, 570, 562, 570, 1642, 620, 562, 570, 562, 570, 1662, 602, 562, 570, 1640, 626, 1676, 586, 1712, 550, 564, 570, 1648, 616, 1692, 570, 564, 570, 1710, 554, 39470, 9036, 2290, 552};
-uint16_t rawData2[3] = {9034, 2290, 552};
 
 int frontState;
 
@@ -35,6 +33,9 @@ int lightSwitch06;
 int lightSwitch07;
 int lightSwitch08;
 int lightSwitch09;
+int lightSwitch21;
+int lightSwitch22;
+int lightSwitch23;
 int bluetoothButton;
 int holdBtnTime=40;     //Hold time on IR button
 
@@ -45,11 +46,15 @@ WidgetBridge bridgeEntery(V20);
 
 void bluetoothIR()
 {
+<<<<<<< HEAD
   // irsend.sendRaw(rawData, 71, 32); // Send a raw data capture at 38kHz.
   // irsend.sendNEC(0xFF12ED, 32);   //Power
   // delay(50);
   irsend.sendNEC(0xFF12ED, 32, 40);
   
+=======
+  irsend.sendNEC(0xFF12ED, 32, 40); // Send a raw data capture at 38kHz.
+>>>>>>> e6e5d22f431ca0b017324e8ff174d3cb6eb5c3c2
 }
 void bluetoothON()
 {
@@ -210,6 +215,43 @@ BLYNK_WRITE(V20) // Wireless Switch 9
     bluetoothOFF();
   }
 }
+
+BLYNK_WRITE(V21)
+{ // Wireless Switch 9
+  lightSwitch21 = param.asInt();
+  if (lightSwitch09 == 1)
+  {
+    mySwitch.send(3158590, 24);
+  }
+  else
+  {
+    mySwitch.send(3159494, 24);
+  }
+}
+BLYNK_WRITE(V22)
+{ // Wireless Switch 9
+  lightSwitch22 = param.asInt();
+  if (lightSwitch09 == 1)
+  {
+    mySwitch.send(3158530, 24);
+  }
+  else
+  {
+    mySwitch.send(3159414, 24);
+  }
+}
+BLYNK_WRITE(V23)
+{ // Wireless Switch 9
+  lightSwitch23 = param.asInt();
+  if (lightSwitch09 == 1)
+  {
+    mySwitch.send(3159355, 24);
+  }
+  else
+  {
+    mySwitch.send(3159194, 24);
+  }
+}
 // This function is called every time the device is connected to the Blynk.Cloud
 BLYNK_CONNECTED()
 {
@@ -223,6 +265,8 @@ void setup()
   // Serial.begin(9600);
   Blynk.begin(auth, ssid, pass);
   irsend.begin();
+  mySwitch.enableTransmit(RFPin); // GPIO15 D7 RF radio pin
+
   pinMode(MainSpeakers, OUTPUT);
   pinMode(BathSpeakers, OUTPUT);
   pinMode(FrontSpeakers, OUTPUT);
