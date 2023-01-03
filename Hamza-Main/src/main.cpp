@@ -45,14 +45,11 @@ WidgetBridge bridgeEntery(V20);
 
 void bluetoothIR()
 {
-  irsend.sendRaw(rawData, 71, 32); // Send a raw data capture at 38kHz.
-  delay(150);
-
-  for (int x = 0; x <= holdBtnTime; x++)
-  {
-    irsend.sendRaw(rawData2, 3, 32);
-    delay(150);
-  }
+  // irsend.sendRaw(rawData, 71, 32); // Send a raw data capture at 38kHz.
+  // irsend.sendNEC(0xFF12ED, 32);   //Power
+  // delay(50);
+  irsend.sendNEC(0xFF12ED, 32, 40);
+  
 }
 void bluetoothON()
 {
