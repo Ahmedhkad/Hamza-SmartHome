@@ -12,9 +12,9 @@
 
 #include <RCSwitch.h> //for wireless RF433 control
 RCSwitch mySwitch = RCSwitch();
-
-const char *ssid = "Ahmedov" ;       // defined on secret.h
-const char *password = "Ahmedov90";   // defined on secret.h
+ 
+const char *ssid = ssidWifi ;       // defined on secret.h
+const char *password = passWifi;   // defined on secret.h
 const char *mqtt_server = mqttURL; // defined on secret.h
 const char *deviceName = "Hamza-Main";
 WiFiClient espClient;
