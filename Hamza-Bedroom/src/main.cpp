@@ -6,8 +6,8 @@
 #include <PubSubClient.h> //mqtt lib
 
 #include <ArduinoJson.h>
+#include <NTPClient.h>
 #include <WiFiUdp.h>
-#include <ArduinoOTA.h>
 #include <ArduinoOTA.h>
  
 WiFiUDP ntpUDP;
