@@ -129,12 +129,12 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (valuejson == 1)
     {
       digitalWrite(EnteryLight, LOW);
-      client.publish("EnteryLight", "ON");
+      client.publish("Hamza/EnteryLight", "ON");
     }
     else if (valuejson == 0)
     {
       digitalWrite(EnteryLight, HIGH);
-      client.publish("EnteryLight", "OFF");
+      client.publish("Hamza/EnteryLight", "OFF");
     }
     break;
 
@@ -142,12 +142,12 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (valuejson == 1)
     {
       digitalWrite(OutsideLight, LOW);
-      client.publish("OutsideLight", "ON");
+      client.publish("Hamza/OutsideLight", "ON");
     }
     else if (valuejson == 0)
     {
       digitalWrite(OutsideLight, HIGH);
-      client.publish("OutsideLight", "OFF");
+      client.publish("Hamza/OutsideLight", "OFF");
     }
     break;
 
@@ -155,12 +155,12 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (valuejson == 1)
     {
       mySwitch.send(3138542, 24);
-      client.publish("hamza-light4", "ON");
+      client.publish("Hamza/hamza-light4", "ON");
     }
     else if (valuejson == 0)
     {
       mySwitch.send(3119513, 24);
-      client.publish("hamza-light4", "OFF");
+      client.publish("Hamza/hamza-light4", "OFF");
     }
     break;
 
@@ -168,45 +168,45 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (valuejson == 1)
     {
       mySwitch.send(3128232, 24);
-      client.publish("hamza-light5", "ON");
+      client.publish("Hamza/hamza-light5", "ON");
     }
     else if (valuejson == 0)
     {
       mySwitch.send(3188413, 24);
-      client.publish("hamza-light5", "OFF");
+      client.publish("Hamza/hamza-light5", "OFF");
     }
     break;
 
   case 5:
     hourStart = valuejson;
     minuteStart = datajson;
-    client.publish("EntryTimerStart", "OK");
+    client.publish("Hamza/EntryTimerStart", "OK");
     break;
 
   case 6:
     hourEnd = valuejson;
     minuteEnd = datajson;
-    client.publish("EntryTimerEnd", "OK");
+    client.publish("Hamza/EntryTimerEnd", "OK");
     break;
 
   case 9:
     if (valuejson == 9)
     {
       timerEnable = true;
-      client.publish("EntryTimerEnable", "ON");
+      client.publish("Hamza/EntryTimerEnable", "ON");
     }
     else if (valuejson == 5)
     {
       timerEnable = false;
-      client.publish("EntryTimerEnable", "OFF");
-      client.publish("EntryTimerStart", "OFF");
-      client.publish("EntryTimerEnd", "OFF");
+      client.publish("Hamza/EntryTimerEnable", "OFF");
+      client.publish("Hamza/EntryTimerStart", "OFF");
+      client.publish("Hamza/EntryTimerEnd", "OFF");
     }
     break;
 
   default:
     Serial.print("Err device in case-switch invalid.");
-    client.publish("Error", "Entry case-switch invalid");
+    client.publish("Hamza/Error", "Entry case-switch invalid");
     break;
   }
 }
@@ -222,9 +222,9 @@ void reconnect()
     {
       Serial.println("EntryConnected");
       // Once connected, publish an announcement...
-      client.publish("EntryConnected", "online", true);
+      client.publish("Hamza/EntryConnected", "online", true);
       // ... and resubscribe
-      client.subscribe("Hamza-Entry");
+      client.subscribe("Hamza/Hamza-Entry");
     }
     else
     {
@@ -257,7 +257,7 @@ void setup()
                      {
     error_str = String(error);
     error_str.toCharArray(error_msg, error_str.length() + 1);
-    client.publish("Error", error_msg); });
+    client.publish("Hamza/Error", error_msg); });
   timeClient.begin();
   timeClient.update();
   ArduinoOTA.begin();
@@ -281,7 +281,7 @@ void loop()
     updater["Disconnected"] = count;
     updater["time"] = timeClient.getFormattedTime();
     serializeJson(updater, buffer);
-    client.publish("EntryLifeTopic", buffer);
+    client.publish("Hamza/EntryLifeTopic", buffer);
     // Serial.println(timeClient.getFormattedTime());  //for debug
   }
 
@@ -295,12 +295,12 @@ void loop()
     if ((hourNow == hourStart) && (minuteNow == minuteStart))
     {
       digitalWrite(OutsideLight, LOW);
-      client.publish("OutsideLight", "ON");
+      client.publish("Hamza/OutsideLight", "ON");
     }
     else if ((hourNow == hourEnd) && (minuteNow == minuteEnd))
     {
       digitalWrite(OutsideLight, HIGH);
-      client.publish("OutsideLight", "OFF");
+      client.publish("Hamza/OutsideLight", "OFF");
     }
   }
 
