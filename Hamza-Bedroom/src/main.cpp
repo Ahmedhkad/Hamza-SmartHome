@@ -118,12 +118,12 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (valuejson == 1)
     {
       digitalWrite(NVRPower, LOW);
-      client.publish("NVRPower", "ON");
+      client.publish("Hamza/NVRPower", "ON");
     }
     else if (valuejson == 0)
     {
       digitalWrite(NVRPower, HIGH);
-      client.publish("NVRPower", "OFF");
+      client.publish("Hamza/NVRPower", "OFF");
     }
     break;
 
@@ -131,12 +131,12 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (valuejson == 1)
     {
       digitalWrite(BedroomAmp, LOW);
-      client.publish("BedroomAmp", "ON");
+      client.publish("Hamza/BedroomAmp", "ON");
     }
     else if (valuejson == 0)
     {
       digitalWrite(BedroomAmp, HIGH);
-      client.publish("BedroomAmp", "OFF");
+      client.publish("Hamza/BedroomAmp", "OFF");
     }
     break;
 
@@ -144,39 +144,39 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (valuejson == 1)
     {
       digitalWrite(BedroomSpeakers, LOW);
-      client.publish("BedroomSpeakers", "ON");
+      client.publish("Hamza/BedroomSpeakers", "ON");
     }
     else if (valuejson == 0)
     {
       digitalWrite(BedroomSpeakers, HIGH);
-      client.publish("BedroomSpeakers", "OFF");
+      client.publish("Hamza/BedroomSpeakers", "OFF");
     }
     break;
 
     case 5:
     hourStart = valuejson;
     minuteStart = datajson;
-    client.publish("BedroomTimerStart", "OK");
+    client.publish("Hamza/BedroomTimerStart", "OK");
     break;
 
   case 6:
     hourEnd = valuejson;
     minuteEnd = datajson;
-    client.publish("BedroomTimerEnd", "OK");
+    client.publish("Hamza/BedroomTimerEnd", "OK");
     break;
 
   case 9:
     if (valuejson == 9)
     {
       timerEnable = true;
-      client.publish("BedroomTimerEnable", "ON");
+      client.publish("Hamza/BedroomTimerEnable", "ON");
     }
     else if (valuejson == 5)
     {
       timerEnable = false;
-      client.publish("BedroomTimerEnable", "OFF");
-      client.publish("BedroomTimerStart", "OFF");
-      client.publish("BedroomTimerEnd", "OFF");
+      client.publish("Hamza/BedroomTimerEnable", "OFF");
+      client.publish("Hamza/BedroomTimerStart", "OFF");
+      client.publish("Hamza/BedroomTimerEnd", "OFF");
     }
     break;
 
@@ -200,9 +200,9 @@ void reconnect()
     {
       Serial.println("BedroomConnected");
       // Once connected, publish an announcement...
-      client.publish("BedroomConnected", "online", true);
+      client.publish("Hamza/BedroomConnected", "online", true);
       // ... and resubscribe
-      client.subscribe("Hamza-Bedroom");
+      client.subscribe("Hamza/Hamza-Bedroom");
     }
     else
     {
@@ -238,7 +238,7 @@ void setup()
                      {
     error_str = String(error);
     error_str.toCharArray(error_msg, error_str.length() + 1);
-    client.publish("Error", error_msg); });
+    client.publish("Hamza/Error", error_msg); });
   timeClient.begin();
   timeClient.update();
   ArduinoOTA.begin();
@@ -262,7 +262,7 @@ void loop()
     updater["Disconnected"] = count;
     updater["time"] = timeClient.getFormattedTime();
     serializeJson(updater, buffer);
-    client.publish("BedroomLifeTopic", buffer);
+    client.publish("Hamza/BedroomLifeTopic", buffer);
     // Serial.println(timeClient.getFormattedTime());  //for debug
   }
 
@@ -276,12 +276,12 @@ void loop()
     if ((hourNow == hourStart) && (minuteNow == minuteStart))
     {
       digitalWrite(NVRPower, LOW);
-      client.publish("NVRPower", "ON");
+      client.publish("Hamza/NVRPower", "ON");
     }
     else if ((hourNow == hourEnd) && (minuteNow == minuteEnd))
     {
       digitalWrite(NVRPower, HIGH);
-      client.publish("NVRPower", "OFF");
+      client.publish("Hamza/NVRPower", "OFF");
     }
   }
 
