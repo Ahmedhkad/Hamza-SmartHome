@@ -114,12 +114,12 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (valuejson == 1)
     {
       digitalWrite(MainSpeakers, LOW);
-      client.publish("MainSpeakers", "ON");
+      client.publish("Hamza/MainSpeakers", "ON");
     }
     else if (valuejson == 0)
     {
       digitalWrite(MainSpeakers, HIGH);
-      client.publish("MainSpeakers", "OFF");
+      client.publish("Hamza/MainSpeakers", "OFF");
     }
     break;
 
@@ -127,12 +127,12 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (valuejson == 1)
     {
       digitalWrite(BathSpeakers, LOW);
-      client.publish("BathSpeakers", "ON");
+      client.publish("Hamza/BathSpeakers", "ON");
     }
     else if (valuejson == 0)
     {
       digitalWrite(BathSpeakers, HIGH);
-      client.publish("BathSpeakers", "OFF");
+      client.publish("Hamza/BathSpeakers", "OFF");
     }
     break;
 
@@ -140,12 +140,12 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (valuejson == 1)
     {
       digitalWrite(FrontSpeakers, LOW);
-      client.publish("FrontSpeakers", "ON");
+      client.publish("Hamza/FrontSpeakers", "ON");
     }
     else if (valuejson == 0)
     {
       digitalWrite(FrontSpeakers, HIGH);
-      client.publish("FrontSpeakers", "OFF");
+      client.publish("Hamza/FrontSpeakers", "OFF");
     }
     break;
 
@@ -153,12 +153,12 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (valuejson == 1)
     {
       digitalWrite(MainAMP, LOW);
-      client.publish("MainAMP", "ON");
+      client.publish("Hamza/MainAMP", "ON");
     }
     else if (valuejson == 0)
     {
       digitalWrite(MainAMP, HIGH);
-      client.publish("MainAMP", "OFF");
+      client.publish("Hamza/MainAMP", "OFF");
     }
     break;
 
@@ -166,12 +166,12 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (valuejson == 1)
     {
       digitalWrite(BathAMP, LOW);
-      client.publish("BathAMP", "ON");
+      client.publish("Hamza/BathAMP", "ON");
     }
     else if (valuejson == 0)
     {
       digitalWrite(BathAMP, HIGH);
-      client.publish("BathAMP", "OFF");
+      client.publish("Hamza/BathAMP", "OFF");
     }
     break;
 
@@ -179,12 +179,12 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (valuejson == 1)
     {
       mySwitch.send(3158530, 24);
-      client.publish("hamza-light1", "ON");
+      client.publish("Hamza/hamza-light1", "ON");
     }
     else if (valuejson == 0)
     {
       mySwitch.send(3159414, 24);
-      client.publish("hamza-light1", "OFF");
+      client.publish("Hamza/hamza-light1", "OFF");
     }
     break;
 
@@ -192,12 +192,12 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (valuejson == 1)
     {
       mySwitch.send(3158590, 24);
-      client.publish("hamza-light2", "ON");
+      client.publish("Hamza/hamza-light2", "ON");
     }
     else if (valuejson == 0)
     {
       mySwitch.send(3159494, 24);
-      client.publish("hamza-light2", "OFF");
+      client.publish("Hamza/hamza-light2", "OFF");
     }
     break;
 
@@ -205,12 +205,12 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (valuejson == 1)
     {
       mySwitch.send(3158532, 24);
-      client.publish("hamza-light3", "ON");
+      client.publish("Hamza/hamza-light3", "ON");
     }
     else if (valuejson == 0)
     {
       mySwitch.send(3159413, 24);
-      client.publish("hamza-light3", "OFF");
+      client.publish("Hamza/hamza-light3", "OFF");
     }
     break;
 
@@ -218,12 +218,12 @@ void callback(char *topic, byte *payload, unsigned int length)
     if (valuejson == 1)
     {
       irsend.sendNEC(0xFF12ED, 32, 40);
-      client.publish("hamza-blutooth", "ON40");
+      client.publish("Hamza/hamza-blutooth", "ON40");
     }
     else if (valuejson == 0)
     {
        irsend.sendNEC(0xFF12ED, 32, 80);
-       client.publish("hamza-blutooth", "ON80");
+       client.publish("Hamza/hamza-blutooth", "ON80");
     }
     break;
 
@@ -245,9 +245,9 @@ void reconnect()
     {
       Serial.println("MainConnected");
       // Once connected, publish an announcement...
-      client.publish("MainConnected", "online", true);
+      client.publish("Hamza/MainConnected", "online", true);
       // ... and resubscribe
-      client.subscribe("Hamza-Main");
+      client.subscribe("Hamza/Hamza-Main");
     }
     else
     {
@@ -291,7 +291,7 @@ void setup()
                      {
     error_str = String(error);
     error_str.toCharArray(error_msg, error_str.length() + 1);
-    client.publish("Error", error_msg); });
+    client.publish("Hamza/Error", error_msg); });
   timeClient.begin();
   timeClient.update();
   ArduinoOTA.begin();
@@ -315,7 +315,7 @@ void loop()
     updater["Disconnected"] = count;
     updater["time"] = timeClient.getFormattedTime();
     serializeJson(updater, buffer);
-    client.publish("MainLifeTopic", buffer);
+    client.publish("Hamza/MainLifeTopic", buffer);
     // Serial.println(timeClient.getFormattedTime());  //for debug
   }
 
