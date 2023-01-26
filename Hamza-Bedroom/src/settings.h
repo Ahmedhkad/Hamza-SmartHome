@@ -18,3 +18,5 @@
 #define BedroomAmp           5
 #define BedroomSpeakers            4
 
+#define NVRPower            14
+
