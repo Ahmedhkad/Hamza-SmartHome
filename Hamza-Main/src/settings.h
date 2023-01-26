@@ -13,7 +13,6 @@
 
 /* I/O pins selection of NodeMCU */ 
 
-#define NVRPower            5     //D1 
 #define MainSpeakers        16    //D0 
 #define BathSpeakers        0     //D3 
 #define FrontSpeakers       14    //D5

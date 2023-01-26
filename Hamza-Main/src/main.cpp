@@ -8,45 +8,54 @@
 #include <ArduinoJson.h>
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
 #include <ArduinoOTA.h>
 
 #include <RCSwitch.h> //for wireless RF433 control
 RCSwitch mySwitch = RCSwitch();
  
+ WiFiUDP ntpUDP;
+// https://www.ntp-servers.net/servers.html
+NTPClient timeClient(ntpUDP, "ntp1.ntp-servers.net", 10200, 600000);
+
 const char *ssid = ssidWifi ;       // defined on secret.h
 const char *password = passWifi;   // defined on secret.h
 const char *mqtt_server = mqttURL; // defined on secret.h
-const char *deviceName = "Hamza-Main";
+const char *deviceName = mqttClient;
+
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-StaticJsonDocument<100> doc;
+StaticJsonDocument<150> doc;
+StaticJsonDocument<300> updater;
+
+long unsigned int timestamp;
 
 int device;
 int valuejson;
+int datajson;
+
+bool timerEnable = true;
+
+int count = 0;
+
+String timeStr;
+char timeChar[300];
+String error_str;
+char error_msg[300];
+
+unsigned long WifiDelayMillis = 0;
+const long WifiDelayInterval = 5000; // interval to check wifi and mqtt
+
+// unsigned long timerMillis2 = 0;
+// const long interval = 8000; // interval at which to blink (milliseconds)
+
 
 const uint16_t kIrLed = IRPin; // ESP8266 GPIO pin to use. Recommended: 4 (D2).
 IRsend irsend(kIrLed);         // Set the GPIO to be used to sending the message.
 // data captured by IRrecvDumpV2.ino
-
-int frontState;
-
-int lightSwitch01;
-int lightSwitch02;
-int lightSwitch03;
-int lightSwitch04;
-int lightSwitch05;
-int lightSwitch06;
-int lightSwitch07;
-int lightSwitch08;
-int lightSwitch09;
-int lightSwitch21;
-int lightSwitch22;
-int lightSwitch23;
-int bluetoothButton;
-int holdBtnTime=40;     //Hold time on IR button
-
-boolean bluetoothState = false;
+ 
 
  void setup_wifi() {
 
@@ -55,7 +64,7 @@ boolean bluetoothState = false;
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
-
+  WiFi.hostname(deviceName); 
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
@@ -101,28 +110,15 @@ void callback(char *topic, byte *payload, unsigned int length)
 
   switch (device)
   {
-  case 1:
-    if (valuejson == 1)
-    {
-      digitalWrite(NVRPower, HIGH);
-      client.publish("NVRPower", "ON");
-    }
-    else if (valuejson == 0)
-    {
-      digitalWrite(NVRPower, LOW);
-      client.publish("NVRPower", "OFF");
-    }
-    break;
-
   case 2:
     if (valuejson == 1)
     {
-      digitalWrite(MainSpeakers, HIGH);
+      digitalWrite(MainSpeakers, LOW);
       client.publish("MainSpeakers", "ON");
     }
     else if (valuejson == 0)
     {
-      digitalWrite(MainSpeakers, LOW);
+      digitalWrite(MainSpeakers, HIGH);
       client.publish("MainSpeakers", "OFF");
     }
     break;
@@ -130,12 +126,12 @@ void callback(char *topic, byte *payload, unsigned int length)
   case 3:
     if (valuejson == 1)
     {
-      digitalWrite(BathSpeakers, HIGH);
+      digitalWrite(BathSpeakers, LOW);
       client.publish("BathSpeakers", "ON");
     }
     else if (valuejson == 0)
     {
-      digitalWrite(BathSpeakers, LOW);
+      digitalWrite(BathSpeakers, HIGH);
       client.publish("BathSpeakers", "OFF");
     }
     break;
@@ -143,12 +139,12 @@ void callback(char *topic, byte *payload, unsigned int length)
     case 4:
     if (valuejson == 1)
     {
-      digitalWrite(FrontSpeakers, HIGH);
+      digitalWrite(FrontSpeakers, LOW);
       client.publish("FrontSpeakers", "ON");
     }
     else if (valuejson == 0)
     {
-      digitalWrite(FrontSpeakers, LOW);
+      digitalWrite(FrontSpeakers, HIGH);
       client.publish("FrontSpeakers", "OFF");
     }
     break;
@@ -156,12 +152,12 @@ void callback(char *topic, byte *payload, unsigned int length)
     case 5:
     if (valuejson == 1)
     {
-      digitalWrite(MainAMP, HIGH);
+      digitalWrite(MainAMP, LOW);
       client.publish("MainAMP", "ON");
     }
     else if (valuejson == 0)
     {
-      digitalWrite(MainAMP, LOW);
+      digitalWrite(MainAMP, HIGH);
       client.publish("MainAMP", "OFF");
     }
     break;
@@ -169,12 +165,12 @@ void callback(char *topic, byte *payload, unsigned int length)
     case 6:
     if (valuejson == 1)
     {
-      digitalWrite(BathAMP, HIGH);
+      digitalWrite(BathAMP, LOW);
       client.publish("BathAMP", "ON");
     }
     else if (valuejson == 0)
     {
-      digitalWrite(BathAMP, LOW);
+      digitalWrite(BathAMP, HIGH);
       client.publish("BathAMP", "OFF");
     }
     break;
@@ -241,15 +237,15 @@ void callback(char *topic, byte *payload, unsigned int length)
 void reconnect()
 {
   // Loop until we're reconnected
-  while (!client.connected())
+  if (!client.connected())
   {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
     if (client.connect(mqttClient, mqttName, mqttPASS))
     {
-      Serial.println("connected");
+      Serial.println("MainConnected");
       // Once connected, publish an announcement...
-      client.publish("LifeTopic", "{\"device\":\"Hamza-Main\"}");
+      client.publish("MainConnected", "online", true);
       // ... and resubscribe
       client.subscribe("Hamza-Main");
     }
@@ -259,14 +255,14 @@ void reconnect()
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");
       // Wait 5 seconds before retrying
-      delay(5000);
+      // delay(5000);
+      count = count + 1;
     }
   }
 }
 
 void setup()
 {
-  pinMode(NVRPower, OUTPUT);
   pinMode(MainSpeakers, OUTPUT);
   pinMode(BathSpeakers, OUTPUT);
   pinMode(FrontSpeakers, OUTPUT);
@@ -275,10 +271,8 @@ void setup()
 
   Serial.begin(115200); // debug print on Serial Monitor
   setup_wifi();
-  client.setServer(mqtt_server, 1883);
+  client.setServer(mqtt_server, mqttPORT);
   client.setCallback(callback);
-  ArduinoOTA.setHostname(mqttClient);
-  ArduinoOTA.begin();
 
   irsend.begin();
   mySwitch.enableTransmit(RFPin); // GPIO15 D7 RF radio pin
@@ -288,16 +282,42 @@ void setup()
   digitalWrite(FrontSpeakers, HIGH);
   digitalWrite(MainAMP, HIGH);
   digitalWrite(BathAMP, HIGH);
+
+    ArduinoOTA.setHostname(mqttClient);
+  ArduinoOTA.setPort(otaPort);
+  ArduinoOTA.setPassword(otaPass);
+
+  ArduinoOTA.onError([](ota_error_t error)
+                     {
+    error_str = String(error);
+    error_str.toCharArray(error_msg, error_str.length() + 1);
+    client.publish("Error", error_msg); });
+  timeClient.begin();
+  timeClient.update();
+  ArduinoOTA.begin();
 }
 
 void loop()
 {
   ArduinoOTA.handle();
+  unsigned long currentMillis = millis();
 
-  if (!client.connected())
+  if (currentMillis - WifiDelayMillis >= WifiDelayInterval)
   {
-    Serial.println("reconnecting ...");
-    reconnect();
+    WifiDelayMillis = currentMillis;
+    if (!client.connected())
+    {
+      Serial.println("reconnecting ...");
+      reconnect();
+    }
+    timeClient.update();
+    char buffer[300];
+    updater["Disconnected"] = count;
+    updater["time"] = timeClient.getFormattedTime();
+    serializeJson(updater, buffer);
+    client.publish("MainLifeTopic", buffer);
+    // Serial.println(timeClient.getFormattedTime());  //for debug
   }
+
   client.loop();
 }
