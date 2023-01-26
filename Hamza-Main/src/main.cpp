@@ -241,7 +241,7 @@ void reconnect()
   {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect(mqttClient, mqttName, mqttPASS))
+    if (client.connect(mqttClient, mqttName, mqttPASS, mqttWillTopic ,0 , true,"offline"))
     {
       Serial.println("MainConnected");
       // Once connected, publish an announcement...
