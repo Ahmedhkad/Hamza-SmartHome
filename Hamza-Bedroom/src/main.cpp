@@ -14,14 +14,14 @@ WiFiUDP ntpUDP;
 // https://www.ntp-servers.net/servers.html
 NTPClient timeClient(ntpUDP, "ntp1.ntp-servers.net", 10800, 610000);
 
-int minuteNow;
+int dayNow;
 int hourNow;
 
 int hourStart = 16;
-int minuteStart = 47;
+int dayStart = 47;
 
 int hourEnd = 7;
-int minuteEnd = 41;
+int dayEnd = 41;
 
 const char *ssid = ssidWifi ;       // defined on secret.h
 const char *password = passWifi;   // defined on secret.h
@@ -155,13 +155,13 @@ void callback(char *topic, byte *payload, unsigned int length)
 
     case 5:
     hourStart = valuejson;
-    minuteStart = datajson;
+    dayStart = datajson;
     client.publish("Hamza/BedroomTimerStart", "OK");
     break;
 
   case 6:
     hourEnd = valuejson;
-    minuteEnd = datajson;
+    dayEnd = datajson;
     client.publish("Hamza/BedroomTimerEnd", "OK");
     break;
 
@@ -270,15 +270,15 @@ void loop()
   {
     timerMillis2 = currentMillis;
 
-    int minuteNow = timeClient.getMinutes();
+    int dayNow = timeClient.getDay();
     int hourNow = timeClient.getHours();
 
-    if ((hourNow == hourStart) && (minuteNow == minuteStart))
+    if ((hourNow == hourStart) && (dayNow == dayStart))
     {
       digitalWrite(NVRPower, LOW);
       client.publish("Hamza/NVRPower", "ON");
     }
-    else if ((hourNow == hourEnd) && (minuteNow == minuteEnd))
+    else if ((hourNow == hourEnd) && (dayNow == dayEnd))
     {
       digitalWrite(NVRPower, HIGH);
       client.publish("Hamza/NVRPower", "OFF");
