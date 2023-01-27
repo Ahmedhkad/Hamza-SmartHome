@@ -40,6 +40,7 @@ int valuejson;
 int datajson;
 
 bool timerEnable = true;
+bool timerDaily = false;
 int count = 0;
 String timeStr;
 char timeChar[300];
@@ -50,7 +51,7 @@ unsigned long WifiDelayMillis = 0;
 const long WifiDelayInterval = 6000; // interval to check wifi and mqtt
 
 unsigned long timerMillis2 = 0;
-const long interval = 9000; // interval at which to blink (milliseconds)
+const long interval = 4000; // interval at which to blink (milliseconds)
 
 
  void setup_wifi() {
@@ -165,6 +166,19 @@ void callback(char *topic, byte *payload, unsigned int length)
     client.publish("Hamza/BedroomTimerEnd", "OK");
     break;
 
+  case 8:
+    if (valuejson == 1)
+    {
+      timerDaily = true;
+      client.publish("Hamza/BedroomtimerDaily", "ON");
+    }
+    else if (valuejson == 0)
+    {
+      timerDaily = false;
+      client.publish("Hamza/BedroomtimerDaily", "OFF");
+    }
+    break;
+
   case 9:
     if (valuejson == 9)
     {
@@ -272,16 +286,27 @@ void loop()
 
     int dayNow = timeClient.getDay();
     int hourNow = timeClient.getHours();
+    int minuteNow = timeClient.getMinutes();
+    int secondNow = timeClient.getSeconds();
 
-    if ((hourNow == hourStart) && (dayNow == dayStart))
+    if ((dayNow == dayStart) && (hourNow == hourStart) && (minuteNow == 0)&&(secondNow >= 54))
     {
       digitalWrite(NVRPower, LOW);
       client.publish("Hamza/NVRPower", "ON");
-    }
-    else if ((hourNow == hourEnd) && (dayNow == dayEnd))
-    {
+      delay(5000);
       digitalWrite(NVRPower, HIGH);
       client.publish("Hamza/NVRPower", "OFF");
+      delay(4000);
+    }
+
+    else if ((timerDaily == true) && (hourNow == hourStart) && (minuteNow == 0)&&(secondNow >= 54))
+    {
+      digitalWrite(NVRPower, LOW);
+      client.publish("Hamza/NVRPower", "ON");
+      delay(5000);
+      digitalWrite(NVRPower, HIGH);
+      client.publish("Hamza/NVRPower", "OFF");
+      delay(4000);
     }
   }
 
