@@ -274,7 +274,7 @@ void loop()
     timeClient.update();
     char buffer[300];
     updater["Disconnected"] = count;
-    updater["time"] = timeClient.getFormattedTime();
+    updater["time"] = timeClient.getEpochTime();
     serializeJson(updater, buffer);
     client.publish("Hamza/BedroomLifeTopic", buffer);
     // Serial.println(timeClient.getFormattedTime());  //for debug
